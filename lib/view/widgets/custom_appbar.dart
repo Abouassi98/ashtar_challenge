@@ -22,7 +22,7 @@ class CustomAppBar extends StatelessWidget {
           ),
           Row(
             children: [
-              MediaQuery.sizeOf(context).width > 300
+              MediaQuery.sizeOf(context).width > 400
                   ? const CustomSearchTextField()
                   : const Icon(
                       Icons.search,
