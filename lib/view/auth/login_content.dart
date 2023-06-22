@@ -94,6 +94,7 @@ class LoginView extends GetWidget<AuthViewModel> {
                         if (_formKey.currentState!.validate()) {
                           _formKey.currentState!.save();
                           controller.signInWithEmailAndPassword(context);
+                  
                         }
                       },
                     ),

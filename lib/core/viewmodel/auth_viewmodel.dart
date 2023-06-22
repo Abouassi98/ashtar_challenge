@@ -9,7 +9,9 @@ import '../sevices/local_storage_user.dart';
 
 class AuthViewModel extends GetxController {
   String? email, password, name;
+  final Rxn<UserModel?> _currentUser = Rxn<UserModel?>();
 
+  UserModel? get currentUser => _currentUser.value;
   final _auth = FirebaseAuth.instance;
 
   void signInWithEmailAndPassword(BuildContext context) async {
@@ -21,7 +23,7 @@ class AuthViewModel extends GetxController {
           saveUserLocal(
               UserModel.fromJson(doc.data() as Map<dynamic, dynamic>));
         });
-      }).then((value) => const HomeRoute().go(context));
+      }).then((value) async => const HomeRoute().go(context));
     } catch (error) {
       String errorMessage =
           error.toString().substring(error.toString().indexOf(' ') + 1);
@@ -31,8 +33,8 @@ class AuthViewModel extends GetxController {
 
   void signOut(BuildContext context) async {
     try {
+      await LocalStorageUser.clearUserData();
       await _auth.signOut().then((value) => const LoginViewRoute().go(context));
-      LocalStorageUser.clearUserData();
     } catch (error) {
       debugPrint(error.toString());
     }
@@ -49,6 +51,11 @@ class AuthViewModel extends GetxController {
     );
     FirestoreUser().addUserToFirestore(userModel);
     saveUserLocal(userModel);
+  }
+
+  Future<UserModel?> getCurrentUser() async {
+    _currentUser.value = await LocalStorageUser.getUserData();
+    return _currentUser.value;
   }
 
   void saveUserLocal(UserModel userModel) async {

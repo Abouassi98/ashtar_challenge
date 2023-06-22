@@ -7,31 +7,9 @@ part of 'app_router.dart';
 // **************************************************************************
 
 List<RouteBase> get $appRoutes => [
-      $checkAuthRoute,
       $loginViewRoute,
       $homeRoute,
     ];
-
-RouteBase get $checkAuthRoute => GoRouteData.$route(
-      path: '/',
-      factory: $CheckAuthRouteExtension._fromState,
-    );
-
-extension $CheckAuthRouteExtension on CheckAuthRoute {
-  static CheckAuthRoute _fromState(GoRouterState state) =>
-      const CheckAuthRoute();
-
-  String get location => GoRouteData.$location(
-        '/',
-      );
-
-  void go(BuildContext context) => context.go(location);
-
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-}
 
 RouteBase get $loginViewRoute => GoRouteData.$route(
       path: '/login',

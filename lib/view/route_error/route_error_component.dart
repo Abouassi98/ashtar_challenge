@@ -20,7 +20,7 @@ class RouteErrorComponent extends StatelessWidget {
         ),
         CustomButton(
           text: 'goToHome',
-          onTap: () => const CheckAuthRoute().go(context),
+          onTap: () => const LoginViewRoute().go(context),
         )
       ],
     );

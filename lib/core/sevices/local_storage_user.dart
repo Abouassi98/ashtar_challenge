@@ -11,7 +11,6 @@ class LocalStorageUser {
 
   static Future<UserModel?> getUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
     return prefs.getString('user') == null
         ? null
         : UserModel.fromJson(

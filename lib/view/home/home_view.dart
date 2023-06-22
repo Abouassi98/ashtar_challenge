@@ -25,7 +25,8 @@ class HomeScreen extends StatelessWidget {
                   )
                 : const Row(
                     children: [
-                      Flexible(flex: 2, child: CustomAnnounsementsContainer()),
+                      Flexible(
+                          flex: 2, child: CustomAnnounsementsContainer()),
                       Expanded(flex: 1, child: CustomDueContainer())
                     ],
                   )

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
-import '../../view/auth/check_auth.dart';
 import '../../view/home/home_view.dart';
 import '../../view/auth/login_in_view.dart';
 import '../../view/home_shell/home_shell_view.dart';
 import '../../view/route_error/route_error_view.dart';
-
+import '../viewmodel/auth_viewmodel.dart';
 import 'navigation_transitions.dart';
 
 part 'app_router.g.dart';
@@ -17,14 +17,15 @@ part 'app_router.g.dart';
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
 final router = GoRouter(
+  initialLocation: const LoginViewRoute().location,
   navigatorKey: _rootNavigatorKey,
-  initialLocation: const CheckAuthRoute().location,
+//  initialLocation: const SplashRoute().location,
   routes: [
     // Temporary using generated routes separately to be able to use
     // StatefulShellRoute until it's supported by app_route_builder.
     // TODO: migrate StatefulShellRoute to code gen and use $appRoutes:
     // https://github.com/flutter/flutter/issues/127371
-    $checkAuthRoute,
+    //  $splashRoute,
     $loginViewRoute,
     // Like ShellRoute but can maintain the state of the Navigators for each branch.
     StatefulShellRoute.indexedStack(
@@ -74,17 +75,42 @@ final router = GoRouter(
       ],
     ),
   ],
+  redirect: (BuildContext context, GoRouterState state) async {
+    final bool isAuthenticated =
+        await Get.find<AuthViewModel>().getCurrentUser() != null;
+
+    final allowedRoutes = [
+      //    const SplashRoute().location,
+      const LoginViewRoute().location,
+    ];
+
+    // If the user is authenticated but still on the login page, send to home.
+    if (isAuthenticated &&
+        state.location.startsWith(const LoginViewRoute().location)) {
+      return const HomeRoute().location;
+    }
+
+    if (!isAuthenticated) {
+      // Return null (no redirecting) if the route is allowed for
+      // unAuthenticated users or else redirect to login page.
+      if (!allowedRoutes.any(state.location.startsWith)) return null;
+      return const LoginViewRoute().location;
+    }
+
+    // Return null (no redirecting) if the user is authenticated.
+    return null;
+  },
   errorBuilder: (_, state) => RouteErrorView(state.error),
 );
 
-@TypedGoRoute<CheckAuthRoute>(path: '/')
-class CheckAuthRoute extends GoRouteData {
-  const CheckAuthRoute();
+// @TypedGoRoute<SplashRoute>(path: '/')
+// class SplashRoute extends GoRouteData {
+//   const SplashRoute();
 
-  @override
-  Page<void> buildPage(BuildContext context, GoRouterState state) =>
-      FadeTransitionPage(state.pageKey, const CheckAuthView());
-}
+//   @override
+//   Page<void> buildPage(BuildContext context, GoRouterState state) =>
+//       FadeTransitionPage(state.pageKey, const SplashView());
+// }
 
 @TypedGoRoute<LoginViewRoute>(path: '/login')
 class LoginViewRoute extends GoRouteData {
