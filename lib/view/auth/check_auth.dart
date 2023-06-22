@@ -1,10 +1,9 @@
-import 'package:ashtar_challenge/view/home/home_view.dart';
+import 'package:ashtar_challenge/core/routing/app_router.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 
 import '../../core/viewmodel/profile_viewmodel.dart';
-import 'login_in_view.dart';
 
 class CheckAuthView extends StatelessWidget {
   const CheckAuthView({super.key});
@@ -14,9 +13,13 @@ class CheckAuthView extends StatelessWidget {
     return GetBuilder<ProfileViewModel>(
         init: ProfileViewModel(),
         builder: (controller) {
-          return controller.currentUser == null
-              ? const LogInView()
-              : const HomeScreen();
+          Future.delayed(
+              Duration.zero,
+              () => controller.currentUser == null
+                  ? const LoginViewRoute().go(context)
+                  : const HomeRoute().go(context));
+
+          return const SizedBox();
         });
   }
 }
