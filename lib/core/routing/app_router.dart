@@ -19,13 +19,12 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final router = GoRouter(
   initialLocation: const LoginViewRoute().location,
   navigatorKey: _rootNavigatorKey,
-//  initialLocation: const SplashRoute().location,
   routes: [
     // Temporary using generated routes separately to be able to use
     // StatefulShellRoute until it's supported by app_route_builder.
     // TODO: migrate StatefulShellRoute to code gen and use $appRoutes:
     // https://github.com/flutter/flutter/issues/127371
-    //  $splashRoute,
+
     $loginViewRoute,
     // Like ShellRoute but can maintain the state of the Navigators for each branch.
     StatefulShellRoute.indexedStack(
@@ -76,32 +75,33 @@ final router = GoRouter(
     ),
   ],
   redirect: (BuildContext context, GoRouterState state) async {
-    final bool isAuthenticated =
-        await Get.find<AuthViewModel>().getCurrentUser() != null;
+    RxBool isAuthenticated =
+        await Get.find<AuthViewModel>().getCurrentUser() != null
+            ? true.obs
+            : false.obs;
 
+    debugPrint('object3=$isAuthenticated');
     final allowedRoutes = [
-      //    const SplashRoute().location,
       const LoginViewRoute().location,
     ];
 
-    // If the user is authenticated but still on the login page, send to home.
-    if (isAuthenticated &&
+    if (isAuthenticated.isTrue &&
         state.location.startsWith(const LoginViewRoute().location)) {
       return const HomeRoute().location;
     }
-
-    if (!isAuthenticated) {
+    if (isAuthenticated.isFalse) {
       // Return null (no redirecting) if the route is allowed for
       // unAuthenticated users or else redirect to login page.
-      if (!allowedRoutes.any(state.location.startsWith)) return null;
+      if (allowedRoutes.any(state.location.startsWith)) return null;
       return const LoginViewRoute().location;
     }
 
-    // Return null (no redirecting) if the user is authenticated.
     return null;
   },
   errorBuilder: (_, state) => RouteErrorView(state.error),
 );
+
+// Return null (no redirecting) if the user is authenticated.
 
 // @TypedGoRoute<SplashRoute>(path: '/')
 // class SplashRoute extends GoRouteData {

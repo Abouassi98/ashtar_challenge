@@ -90,11 +90,10 @@ class LoginView extends GetWidget<AuthViewModel> {
                     CustomButton(
                       text: 'SIGN IN',
                       high: Sizes.buttonHeight48,
-                      onTap: () {
+                      onTap: () async {
                         if (_formKey.currentState!.validate()) {
                           _formKey.currentState!.save();
-                          controller.signInWithEmailAndPassword(context);
-                  
+                          return controller.signInWithEmailAndPassword(context);
                         }
                       },
                     ),
